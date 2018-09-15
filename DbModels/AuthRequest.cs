@@ -12,6 +12,9 @@ namespace MacAuth.DbModels
         public string UserCode { get; set; }
         public string Provider { get; set; }
         public string ClientId { get; set; }
+        public string Status { get; set; }
+        public string Code { get; set; }
+        public string Error { get; set; }
         public DateTime CreatedDate { get; set; }
         public List<AuthRequestParam> Params { get; set; }
     }

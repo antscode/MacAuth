@@ -1,4 +1,5 @@
 ﻿using MacAuth.ConfigModels;
+using MacAuth.DbModels;
 using MacAuth.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -58,14 +59,14 @@ namespace MacAuth.Controllers
                     else
                     {
                         // Build provider url
-                        var redirectTo = $"https://{Request.Host.Host}/login/response";
-                        var url = $"{provider.LoginUrl}?{provider.RedirectParam}={WebUtility.UrlEncode(redirectTo)}";
+                        var redirectTo = $"{Request.Scheme}://{Request.Host}/login/callback";
+                        var url = $"{provider.LoginUrl}?redirect_uri={WebUtility.UrlEncode(redirectTo)}&state={authRequest.UserCode}";
 
                         var authRequestParams = _context.AuthRequestParams.Where(p => p.AuthRequestId == authRequest.Id);
 
                         foreach (var param in authRequestParams)
                         {
-                            if (param.Name.Equals(provider.RedirectParam, StringComparison.CurrentCultureIgnoreCase))
+                            if (param.Name.Equals("redirect_uri", StringComparison.CurrentCultureIgnoreCase))
                             {
                                 continue;
                             }
@@ -77,6 +78,30 @@ namespace MacAuth.Controllers
                     }
                 }
             }
+
+            return View();
+        }
+
+        public ActionResult Callback(string code, string error, string state)
+        {
+            // Validate state
+            var authRequest = _context.AuthRequests.FirstOrDefault(a => a.UserCode == state);
+
+            if(authRequest == null || authRequest.Status != AuthRequestStatus.Pending)
+            {
+                // TODO: error
+            }
+
+            if(string.IsNullOrWhiteSpace(code))
+            {
+                // TODO: error
+            }
+
+            authRequest.Code = code;
+            authRequest.Error = error;
+            authRequest.Status = AuthRequestStatus.Complete;
+
+            _context.SaveChanges();
 
             return View();
         }

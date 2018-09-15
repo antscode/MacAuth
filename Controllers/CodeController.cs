@@ -5,7 +5,6 @@ using MacAuth.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
@@ -45,7 +44,8 @@ namespace MacAuth.Controllers
                 Provider = ma_provider,
                 ClientId = ma_client_id,
                 DeviceCode = Guid.NewGuid().ToString().ToLower(),
-                CreatedDate = DateTime.UtcNow
+                CreatedDate = DateTime.UtcNow,
+                Status = AuthRequestStatus.Pending
             };
 
             authRequest.UserCode = this.Hashid.Encode(authRequest.Id).ToUpper();
