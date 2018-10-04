@@ -3,6 +3,20 @@
     padding-bottom: 20px;
 }
 
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header .logo {
+    width: 150px;
+}
+
+.col-sm-5 {
+    margin: auto;
+    float: none;
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {

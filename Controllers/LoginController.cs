@@ -33,48 +33,48 @@ namespace MacAuth.Controllers
             {
                 ModelState.AddModelError("user_code", "Please enter a code.");
             }
-
-            var authRequest = _context.AuthRequests.FirstOrDefault(a => a.UserCode == loginRequest.user_code.ToUpper());
-
-            if(authRequest == null)
-            {
-                ModelState.AddModelError("user_code", "Sorry, your code was invalid.");
-            }
             else
-            { 
-                if (_config.Value.Providers == null)
+            {
+                var authRequest = _context.AuthRequests.FirstOrDefault(a => a.UserCode == loginRequest.user_code.ToUpper());
+
+                if (authRequest == null || authRequest.Expires < DateTime.UtcNow)
                 {
-                    ModelState.AddModelError("user_code", "Sorry, an error occurred (0).");
+                    ModelState.AddModelError("user_code", "Sorry, your code was invalid.");
                 }
                 else
                 {
-                    // TODO: Validate expiry!
-
-                    var provider = _config.Value.Providers.FirstOrDefault(p => p.Id == authRequest.Provider);
-
-                    if (provider == null)
+                    if (_config.Value.Providers == null)
                     {
-                        ModelState.AddModelError("user_code", "Sorry, an error occurred (1).");
+                        ModelState.AddModelError("user_code", "Sorry, an error occurred (0).");
                     }
                     else
                     {
-                        // Build provider url
-                        var redirectTo = $"{Request.Scheme}://{Request.Host}/login/callback";
-                        var url = $"{provider.LoginUrl}?redirect_uri={WebUtility.UrlEncode(redirectTo)}&state={authRequest.UserCode}";
+                        var provider = _config.Value.Providers.FirstOrDefault(p => p.Id == authRequest.Provider);
 
-                        var authRequestParams = _context.AuthRequestParams.Where(p => p.AuthRequestId == authRequest.Id);
-
-                        foreach (var param in authRequestParams)
+                        if (provider == null)
                         {
-                            if (param.Name.Equals("redirect_uri", StringComparison.CurrentCultureIgnoreCase))
+                            ModelState.AddModelError("user_code", "Sorry, an error occurred (1).");
+                        }
+                        else
+                        {
+                            // Build provider url
+                            var redirectTo = $"{Request.Scheme}://{Request.Host}/login/callback";
+                            var url = $"{provider.LoginUrl}?redirect_uri={WebUtility.UrlEncode(redirectTo)}&state={authRequest.UserCode}";
+
+                            var authRequestParams = _context.AuthRequestParams.Where(p => p.AuthRequestId == authRequest.Id);
+
+                            foreach (var param in authRequestParams)
                             {
-                                continue;
+                                if (param.Name.Equals("redirect_uri", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    continue;
+                                }
+
+                                url += $"&{param.Name}={WebUtility.UrlEncode(param.Value)}";
                             }
 
-                            url += $"&{param.Name}={WebUtility.UrlEncode(param.Value)}";
+                            return Redirect(url);
                         }
-
-                        return Redirect(url);
                     }
                 }
             }
@@ -84,17 +84,11 @@ namespace MacAuth.Controllers
 
         public ActionResult Callback(string code, string error, string state)
         {
-            // Validate state
             var authRequest = _context.AuthRequests.FirstOrDefault(a => a.UserCode == state);
 
-            if(authRequest == null || authRequest.Status != AuthRequestStatus.Pending)
+            if (authRequest == null || authRequest.Status != AuthRequestStatus.Pending)
             {
-                // TODO: error
-            }
-
-            if(string.IsNullOrWhiteSpace(code))
-            {
-                // TODO: error
+                return RedirectToAction("error", "login");
             }
 
             authRequest.Code = code;
@@ -103,6 +97,23 @@ namespace MacAuth.Controllers
 
             _context.SaveChanges();
 
+            if (!string.IsNullOrWhiteSpace(error) || string.IsNullOrWhiteSpace(code))
+            {
+                return RedirectToAction("error", "login");
+            }
+            else
+            {
+                return RedirectToAction("success", "login");
+            }
+        }
+
+        public ActionResult Success()
+        {
+            return View();
+        }
+
+        public ActionResult Error()
+        {
             return View();
         }
     }

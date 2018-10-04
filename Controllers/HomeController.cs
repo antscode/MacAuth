@@ -6,7 +6,7 @@ namespace MacAuth.Controllers
     {
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "Login");
+            return RedirectToAction("Index", "login");
         }
     }
 }

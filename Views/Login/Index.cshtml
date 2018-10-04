@@ -1,28 +1,29 @@
 ﻿@model MacAuth.Models.LoginRequest
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Enter Code";
 }
 
-<h2>Index</h2>
-
-<h4>LoginRequest</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Index">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="user_code" class="control-label"></label>
-                <input asp-for="user_code" class="form-control" />
-                <span asp-validation-for="user_code" class="text-danger"></span>
+<form asp-action="Index">
+    <div class="col-sm-5">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Connect your Mac</h3>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
+            <div class="panel-body">
+                <p>Enter the code displayed on your Mac</p>
+                <p>
+                    <label asp-for="user_code" class="control-label"></label>
+                    <input asp-for="user_code" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="user_code" class="text-danger"></span>
+                </p>
+                <div class="text-right">
+                    <input type="submit" value="Continue" class="btn btn-primary" />
+                </div>
             </div>
-        </form>
+        </div>
     </div>
-</div>
+</form>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

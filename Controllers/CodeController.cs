@@ -44,7 +44,7 @@ namespace MacAuth.Controllers
                 Provider = ma_provider,
                 ClientId = ma_client_id,
                 DeviceCode = Guid.NewGuid().ToString().ToLower(),
-                CreatedDate = DateTime.UtcNow,
+                Expires = DateTime.UtcNow.AddSeconds(_config.Value.ExpirySeconds),
                 Status = AuthRequestStatus.Pending
             };
 
@@ -88,7 +88,10 @@ namespace MacAuth.Controllers
             }
 
             _context.SaveChanges();
-            
+
+            // Perform cleanup of existing auth requests
+            Cleanup();
+
             return new CodeResponse
             {
                 device_code = authRequest.DeviceCode,
@@ -96,6 +99,29 @@ namespace MacAuth.Controllers
                 expires_in = _config.Value.ExpirySeconds,
                 verification_url = _config.Value.VerificationUrl
             };
+        }
+
+        private void Cleanup()
+        {
+            // Delete any expired requests
+            var expiredRequests = _context.AuthRequests.Where(a => a.Expires < DateTime.UtcNow);
+
+            _context.AuthRequests.RemoveRange(expiredRequests);
+
+            foreach (var expiredRequest in expiredRequests)
+            {
+                _context.AuthRequestParams.RemoveRange(_context.AuthRequestParams.Where(p => p.AuthRequestId == expiredRequest.Id));
+            }
+
+            _context.SaveChanges();
+
+            if(_context.AuthRequests.Count() > _config.Value.MaxStoredRequests)
+            {
+                // Either this service is really popular, or some sort of DOS attack (more likely) - just purge all records
+                _context.AuthRequests.RemoveRange(_context.AuthRequests);
+                _context.AuthRequestParams.RemoveRange(_context.AuthRequestParams);
+                _context.SaveChanges();
+            }
         }
 
         private bool ValidateRequest(string ma_provider, string ma_client_id, out string error)
@@ -149,7 +175,7 @@ namespace MacAuth.Controllers
                 var items = HttpContext.Items;
                 if (!items.ContainsKey("hashids"))
                 {
-                    items["hashids"] = new Hashids(Guid.NewGuid().ToString(), 6);
+                    items["hashids"] = new Hashids(Guid.NewGuid().ToString(), 6, alphabet: "ABCDEFGHIJKLMNPQRSTUVWXYZ1234567890");
                 }
                 return items["hashids"] as Hashids;
             }

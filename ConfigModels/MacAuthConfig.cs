@@ -6,7 +6,7 @@ namespace MacAuth.ConfigModels
     {
         public string VerificationUrl { get; set; }
         public int ExpirySeconds { get; set; }
-        //public IEnumerable<Client> Clients { get; set; }
+        public int MaxStoredRequests { get; set; }
         public IEnumerable<Provider> Providers { get; set; }
     }
 }

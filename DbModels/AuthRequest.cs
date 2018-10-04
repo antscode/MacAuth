@@ -15,7 +15,7 @@ namespace MacAuth.DbModels
         public string Status { get; set; }
         public string Code { get; set; }
         public string Error { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTime Expires { get; set; }
         public List<AuthRequestParam> Params { get; set; }
     }
 }

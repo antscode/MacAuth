@@ -1,0 +1,22 @@
+﻿@model MacAuth.Models.LoginRequest
+
+@{
+    ViewData["Title"] = "Success";
+}
+
+<form asp-action="Index">
+    <div class="col-sm-5">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">Success!</h3>
+            </div>
+            <div class="panel-body">
+                Follow the prompts on your Mac to complete your connection.
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
