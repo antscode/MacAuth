@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Hashids.net" Version="1.2.2" />
+    <PackageReference Include="Magick.NET-Q16-x64" Version="7.9.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.1.2" />

@@ -17,7 +17,8 @@ namespace MacAuth
                 {
                     var environment = webHostBuilderContext.HostingEnvironment;
                     configurationbuilder
-                        .AddJsonFile("appsettings.json");
+                        .AddJsonFile("appsettings.json")
+                        .AddJsonFile("clients.json");
                     configurationbuilder.AddEnvironmentVariables();
                 })
                 .UseStartup<Startup>()

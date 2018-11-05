@@ -5,3 +5,7 @@ MacAuth allows a vintage device to initiate an OAuth flow with a web application
 This flow is very similar to [Facebook Login for Devices](https://developers.facebook.com/docs/facebook-login/for-devices/).
 
 MacAuth is a .NET Core 2.0 MVC Web Application, written in C#.
+
+# Credits
+* Image conversion functionality provided by ImageMagick library by ImageMagick Studio LLC, distributed under a derived Apache 2.0 
+[license](https://imagemagick.org/script/license.php).
