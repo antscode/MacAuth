@@ -6,12 +6,42 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <COMReference Include="QTOLibrary.dll">
+      <Guid>29866aed-1e14-417d-ba0f-1a2be6f5a19e</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>false</Isolated>
+    </COMReference>
+    <COMReference Include="QTOControlLib.dll">
+      <Guid>7b92f833-027d-402b-bff9-a67697366f4e</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="QuickTimePlayerLib.dll">
+      <Guid>b8202e88-1a5f-49e9-872f-d24762136f19</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>false</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Hashids.net" Version="1.2.2" />
-    <PackageReference Include="Magick.NET-Q16-x64" Version="7.9.0.1" />
+    <PackageReference Include="Magick.NET-Q8-x64" Version="7.9.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.HttpsPolicy" Version="2.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.1.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.3" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
   </ItemGroup>
 
   <ItemGroup>

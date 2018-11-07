@@ -2,6 +2,7 @@
 using MacAuth.ConfigModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -31,21 +32,41 @@ namespace MacAuth.Controllers
                 {
                     response.EnsureSuccessStatusCode();
 
-                    var outputStream = new MemoryStream();
-                    
-                    using (var inputStream = response.Content.ReadAsStreamAsync().Result)
+                    using (var imageStream = new MemoryStream())
                     {
-                        using (var image = new MagickImage(inputStream))
+                        using (var inputStream = response.Content.ReadAsStreamAsync().Result)
                         {
-                            image.Resize(dest_width, dest_height);
-                            image.Depth = 1;
-                            image.ColorType = ColorType.Bilevel;
-                            image.Format = MagickFormat.Pict;
+                            using (var image = new MagickImage(inputStream))
+                            {
+                                image.Resize(dest_width, dest_height);
+                                image.Depth = 1;
+                                image.ColorType = ColorType.Bilevel;
+                                image.Format = MagickFormat.Bmp3;
 
-                            image.Write(outputStream);
-                            outputStream.Seek(0, SeekOrigin.Begin);
+                                image.Write(imageStream);
+                                imageStream.Seek(0, SeekOrigin.Begin);
 
-                            return new FileStreamResult(outputStream, "image/x-pict");
+                                var outputStream = new MemoryStream();
+                                var image2PICT1 = new Image2PICT1(imageStream);
+
+                                image2PICT1.Write(outputStream);
+                                outputStream.Seek(0, SeekOrigin.Begin);
+
+                                var sourceUri = new Uri(source_url);
+                                var filename = Path.GetFileNameWithoutExtension(sourceUri.AbsolutePath);
+
+                                if(filename.Length > 26)
+                                {
+                                    filename = filename.Substring(0, 26);
+                                }
+
+                                filename += ".pict";
+
+                                return new FileStreamResult(outputStream, "image/x-pict")
+                                {
+                                    FileDownloadName = filename
+                                };
+                            }
                         }
                     }
                 }
